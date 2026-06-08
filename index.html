@@ -4,6 +4,17 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>LIVE EARTH — 世界のライブカメラ</title>
+
+<!-- スマートフォンは専用UI(mobile.html)へ自動誘導。?pc=1 を付けるとPC版のまま表示。 -->
+<script>
+  (function(){
+    try{
+      var forcePC = /[?&]pc=1\b/.test(location.search);
+      var isPhone = window.matchMedia && window.matchMedia('(max-width:780px)').matches;
+      if(isPhone && !forcePC){ location.replace('mobile.html'); }
+    }catch(e){}
+  })();
+</script>
 <meta name="description" content="世界中のライブカメラを地図から手軽に閲覧。都市・自然・ビーチ・動物・宇宙のライブ映像をひとつの地図で。">
 
 <!-- OGP（SNSシェア用。assets/ogp.png を用意したら有効になります） -->
