@@ -1,14 +1,26 @@
 {
-  "checked_at": "2026-06-08T04:09:42+00:00",
+  "checked_at": "2026-06-08T04:15:18+00:00",
   "summary": {
-    "ok": 5,
-    "skipped": 4,
-    "dead": 9
+    "ok": 10,
+    "skipped": 7,
+    "dead": 1
   },
   "ok": [
     {
       "name": "タイムズスクエア",
       "title": "EarthCam Live:  Times Square Crossroads (New York City, NY)"
+    },
+    {
+      "name": "渋谷スクランブル交差点",
+      "title": "【ライブ】渋谷スクランブル交差点 / Shibuya Scramble Crossing Live Camera【LIVE】ANN/テレ朝"
+    },
+    {
+      "name": "アビーロード",
+      "title": "EarthCam Live:  Abbey Road Crossing (London, England)"
+    },
+    {
+      "name": "ワイキキビーチ",
+      "title": "EarthCam Live:  Waikiki (Honolulu, Hawaii)"
     },
     {
       "name": "ジャクソンホール広場",
@@ -19,15 +31,26 @@
       "title": "Namibia: Live stream in the Namib Desert"
     },
     {
+      "name": "キラウエア火山",
+      "title": "[V1cam] Kīlauea volcano, Hawaii (west Halemaʻumaʻu crater)"
+    },
+    {
       "name": "ナイアガラの滝",
       "title": "【LIVE CAMERA】渋谷スクランブル交差点 ライブ映像　Shibuya scramble crossing"
     },
     {
       "name": "国際宇宙ステーション",
       "title": "Live High-Definition Views from the International Space Station (Official NASA Stream)"
+    },
+    {
+      "name": "オーロラ・ライブ",
+      "title": "Northern Lights powered by EXPLORE.org"
     }
   ],
   "skipped": [
+    "ボンダイビーチ",
+    "カトマイのクマ",
+    "モンブラン / シャモニ",
     "京都・錦市場ほか（観光ライブ）",
     "沖縄・国際通り",
     "十勝白鳥大橋",
@@ -35,48 +58,8 @@
   ],
   "dead": [
     {
-      "name": "渋谷スクランブル交差点",
-      "id": "3kPHJjvBuCw",
-      "reason": "HTTP 404"
-    },
-    {
-      "name": "アビーロード",
-      "id": "tA_yJYol-iU",
-      "reason": "HTTP 404"
-    },
-    {
       "name": "ヴェネツィア大運河",
-      "id": "1-iS7LArMPA",
-      "reason": "HTTP 404"
-    },
-    {
-      "name": "ワイキキビーチ",
-      "id": "O0J3jSyhDtY",
-      "reason": "HTTP 404"
-    },
-    {
-      "name": "ボンダイビーチ",
-      "id": "8DwLcoXg9d4",
-      "reason": "HTTP 404"
-    },
-    {
-      "name": "カトマイのクマ",
-      "id": "D8Apd452tbY",
-      "reason": "HTTP 404"
-    },
-    {
-      "name": "キラウエア火山",
-      "id": "mDP-b6FLkrU",
-      "reason": "HTTP 404"
-    },
-    {
-      "name": "モンブラン / シャモニ",
-      "id": "eAVj1cN5Bbk",
-      "reason": "HTTP 404"
-    },
-    {
-      "name": "オーロラ・ライブ",
-      "id": "Xm8jX78u30o",
+      "id": "P6JA_YjHMZs",
       "reason": "HTTP 404"
     }
   ]
