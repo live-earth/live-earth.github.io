@@ -199,7 +199,7 @@
    ========================================================================= */
 let CATS = {}, CAMERAS = [], activeCats = new Set();
 const markerById = {};
-let issMarker = null, issCam = null;
+let issMarker = null, issCam = null, issLocated = false;
 
 /* ---------- 地図初期化 ---------- */
 const map = L.map('map', {worldCopyJump:true, zoomControl:false, minZoom:2, closePopupOnClick:false})
@@ -343,6 +343,10 @@ async function updateISS(){
     const d = await r.json();
     issCam.lat = d.latitude; issCam.lng = d.longitude;
     issMarker.setLatLng([d.latitude, d.longitude]);
+    if(!issLocated){              // 実際の位置を取得できて初めて地図に表示
+      issLocated = true;
+      if(activeCats.has('space') && !map.hasLayer(issMarker)) map.addLayer(issMarker);
+    }
     const pop = issMarker.getPopup();
     if(pop && pop.isOpen()){
       issCam.loc = `緯度 ${d.latitude.toFixed(2)}, 経度 ${d.longitude.toFixed(2)} ・ 速度 ${Math.round(d.velocity)} km/h`;
@@ -367,7 +371,7 @@ function buildMarkers(){
     m.bindPopup(()=>popupHTML(cam), {maxWidth:360, minWidth:340, closeButton:true});
     m.on('popupopen', ()=>{ if(VIEW==='mini'){ m.closePopup(); pinCam(cam); }});
     markerById[cam.id] = m;
-    if(isISS){ issMarker = m; issCam = cam; map.addLayer(m); }
+    if(isISS){ issMarker = m; issCam = cam; }   // 表示は位置取得後（updateISS内）
     else { cluster.addLayer(m); }
   });
   map.addLayer(cluster);
@@ -446,7 +450,7 @@ function applyFilters(){
   cluster.clearLayers();
   visibleCams().forEach(cam=>{ if(cam.id !== (issCam&&issCam.id)) cluster.addLayer(markerById[cam.id]); });
   if(issMarker){
-    if(activeCats.has('space')){ if(!map.hasLayer(issMarker)) map.addLayer(issMarker); updateISS(); }
+    if(activeCats.has('space')){ if(issLocated && !map.hasLayer(issMarker)) map.addLayer(issMarker); updateISS(); }
     else if(map.hasLayer(issMarker)) map.removeLayer(issMarker);
   }
 }
@@ -485,7 +489,7 @@ function showDataError(){
     + '公開URL（https://〇〇.github.io/）で開くか、'
     + 'ローカルでは <b>python -m http.server</b> 等で配信してください。</div>';
 }
-fetch('data/cameras.json')
+fetch('data/cameras.json?v=' + Date.now())
   .then(r=>{ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
   .then(boot)
   .catch(showDataError);
