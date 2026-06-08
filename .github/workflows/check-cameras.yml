@@ -1,0 +1,38 @@
+name: Check cameras (daily)
+
+# 毎日 JST 06:00（= UTC 21:00）に自動実行。手動実行も可能。
+on:
+  schedule:
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run camera health check
+        shell: bash
+        run: |
+          set +e
+          python scripts/check_cameras.py | tee result.txt
+          code=${PIPESTATUS[0]}
+          {
+            echo '### LIVE EARTH カメラ死活チェック結果'
+            echo ''
+            echo '```'
+            cat result.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          # 再生不可カメラがあればスクリプトは終了コード1 → ジョブを失敗(赤)にする
+          exit "$code"
