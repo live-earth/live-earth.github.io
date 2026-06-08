@@ -12,12 +12,16 @@ YouTube oEmbed エンドポイント（APIキー不要）で判定します。
 GitHub Actions から毎日実行する想定。死んでいるカメラがあれば終了コード1を返すので、
 Actionsの実行が「赤（失敗）」になり、メンテが必要だと気づけます。
 
+判定結果は data/health.json にも書き出します（サイト表示やAPI読み取り用）。
+
 ローカル実行:  python scripts/check_cameras.py
 """
 import json, sys, urllib.parse, urllib.request, urllib.error, os
+from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "data", "cameras.json")
+HEALTH = os.path.join(ROOT, "data", "health.json")
 OEMBED = "https://www.youtube.com/oembed"
 
 
@@ -61,6 +65,18 @@ def main():
     print(f"❌ 再生不可: {len(dead)}")
     for n, vid, reason in dead:
         print(f"   - {n}  (id={vid}, {reason})  → cameras.json のIDを更新してください")
+
+    # 結果を data/health.json に書き出す（サイト表示 / API読み取り用）
+    health = {
+        "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "summary": {"ok": len(ok), "skipped": len(skipped), "dead": len(dead)},
+        "ok": [{"name": n, "title": t} for n, t in ok],
+        "skipped": skipped,
+        "dead": [{"name": n, "id": vid, "reason": reason} for n, vid, reason in dead],
+    }
+    with open(HEALTH, "w", encoding="utf-8") as f:
+        json.dump(health, f, ensure_ascii=False, indent=2)
+        f.write("\n")
 
     # 死んでいるカメラがあれば失敗扱いにして気づけるようにする
     if dead:
