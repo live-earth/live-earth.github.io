@@ -1,9 +1,9 @@
 {
-  "checked_at": "2026-06-08T04:15:18+00:00",
+  "checked_at": "2026-06-08T04:16:29+00:00",
   "summary": {
-    "ok": 10,
+    "ok": 11,
     "skipped": 7,
-    "dead": 1
+    "dead": 0
   },
   "ok": [
     {
@@ -17,6 +17,10 @@
     {
       "name": "アビーロード",
       "title": "EarthCam Live:  Abbey Road Crossing (London, England)"
+    },
+    {
+      "name": "ヴェネツィア大運河",
+      "title": "🔴 4K Live Webcam on Grand Canal, Venice - Live Stream from Ristorante Trattoria Povoledo"
     },
     {
       "name": "ワイキキビーチ",
@@ -56,11 +60,5 @@
     "十勝白鳥大橋",
     "淀川・三川合流（河川防災）"
   ],
-  "dead": [
-    {
-      "name": "ヴェネツィア大運河",
-      "id": "P6JA_YjHMZs",
-      "reason": "HTTP 404"
-    }
-  ]
+  "dead": []
 }
