@@ -1,0 +1,32 @@
+{
+  "categories": {
+    "city":     { "label": "都市",       "color": "#5cc8ff" },
+    "nature":   { "label": "自然",       "color": "#34e0a1" },
+    "beach":    { "label": "ビーチ",     "color": "#ffb454" },
+    "wildlife": { "label": "動物",       "color": "#ff5470" },
+    "mountain": { "label": "山岳",       "color": "#b794ff" },
+    "space":    { "label": "宇宙",       "color": "#ffffff" },
+    "river":    { "label": "河川・防災", "color": "#79e0e8" }
+  },
+  "cameras": [
+    { "name": "タイムズスクエア", "loc": "New York, USA", "lat": 40.7580, "lng": -73.9855, "cat": "city", "youtube": "z-jYdOIKcTQ" },
+    { "name": "渋谷スクランブル交差点", "loc": "Tokyo, Japan", "lat": 35.6595, "lng": 139.7004, "cat": "city", "youtube": "3kPHJjvBuCw" },
+    { "name": "アビーロード", "loc": "London, UK", "lat": 51.5320, "lng": -0.1779, "cat": "city", "youtube": "tA_yJYol-iU" },
+    { "name": "ヴェネツィア大運河", "loc": "Venice, Italy", "lat": 45.4408, "lng": 12.3155, "cat": "city", "youtube": "1-iS7LArMPA" },
+    { "name": "ワイキキビーチ", "loc": "Honolulu, USA", "lat": 21.2760, "lng": -157.8270, "cat": "beach", "youtube": "O0J3jSyhDtY" },
+    { "name": "ボンダイビーチ", "loc": "Sydney, Australia", "lat": -33.8910, "lng": 151.2770, "cat": "beach", "youtube": "8DwLcoXg9d4" },
+    { "name": "ジャクソンホール広場", "loc": "Wyoming, USA", "lat": 43.4799, "lng": -110.7624, "cat": "city", "youtube": "1EiC9bvVGnk" },
+    { "name": "カトマイのクマ", "loc": "Alaska, USA", "lat": 58.5000, "lng": -155.7000, "cat": "wildlife", "youtube": "D8Apd452tbY" },
+    { "name": "アフリカ水場", "loc": "Limpopo, S.Africa", "lat": -27.0300, "lng": 32.4000, "cat": "wildlife", "youtube": "ydYDqZQpim8" },
+    { "name": "キラウエア火山", "loc": "Hawaii, USA", "lat": 19.4200, "lng": -155.2900, "cat": "mountain", "youtube": "mDP-b6FLkrU" },
+    { "name": "モンブラン / シャモニ", "loc": "Chamonix, France", "lat": 45.9290, "lng": 6.8760, "cat": "mountain", "youtube": "eAVj1cN5Bbk" },
+    { "name": "ナイアガラの滝", "loc": "Ontario, Canada", "lat": 43.0830, "lng": -79.0710, "cat": "nature", "youtube": "_9pavMzUY-c" },
+    { "name": "国際宇宙ステーション", "loc": "Live Orbit · 現在地に追従", "lat": 0.0, "lng": -30.0, "cat": "space", "youtube": "O9mYwRlucZY", "track": "iss" },
+    { "name": "オーロラ・ライブ", "loc": "Manitoba, Canada", "lat": 58.7684, "lng": -94.1650, "cat": "nature", "youtube": "Xm8jX78u30o" },
+
+    { "name": "京都・錦市場ほか（観光ライブ）", "loc": "京都市 / 京都市観光協会", "lat": 35.0050, "lng": 135.7649, "cat": "city", "link": "https://www.youtube.com/playlist?list=PLRZI-uS7qxtBsJeiJJfYy_paW2jy3N9Vz", "note": "市内9か所の観光地を配信" },
+    { "name": "沖縄・国際通り", "loc": "那覇市 / BANKSY", "lat": 26.2150, "lng": 127.6868, "cat": "city", "link": "https://banksy.jp/live-camera-demo/", "note": "国際通り・瀬長島など24時間配信" },
+    { "name": "十勝白鳥大橋", "loc": "北海道音更町 / kachimai", "lat": 42.9270, "lng": 143.1840, "cat": "nature", "link": "https://kdml.kachimai.jp/article/33", "note": "2014年から24時間配信中" },
+    { "name": "淀川・三川合流（河川防災）", "loc": "国交省 淀川河川事務所", "lat": 34.8860, "lng": 135.7040, "cat": "river", "link": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live.php", "note": "10分ごとの静止画（防災カメラ）" }
+  ]
+}
