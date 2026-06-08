@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>LIVE EARTH — 世界のライブカメラ（モバイル）</title>
+<meta name="description" content="世界中のライブカメラをスマホで手軽に。都市・自然・ビーチ・動物・宇宙のライブ映像を縦スクロールで。">
+
+<meta property="og:title" content="LIVE EARTH — 世界のライブカメラ">
+<meta property="og:description" content="世界中のライブカメラをスマホで手軽に。">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#0a0e14; --panel:#0f141d; --panel-2:#141b27; --line:#1f2a3a;
+    --ink:#e7edf5; --muted:#7d8da3; --accent:#34e0a1; --accent-2:#ff5470;
+    --amber:#ffb454; --blue:#5cc8ff; --violet:#b794ff;
+    --display:'Bricolage Grotesque', sans-serif;
+    --body:'Spline Sans', system-ui, sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;}
+  body{
+    font-family:var(--body);color:var(--ink);min-height:100vh;
+    background:
+      radial-gradient(900px 500px at 80% -10%, rgba(52,224,161,.07), transparent 60%),
+      radial-gradient(700px 400px at -10% 5%, rgba(92,200,255,.06), transparent 55%),
+      var(--bg);
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+
+  /* ---------- ヘッダー（固定） ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    padding:calc(env(safe-area-inset-top) + 12px) 16px 10px;
+    background:linear-gradient(180deg, rgba(10,14,20,.92), rgba(10,14,20,.78));
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .topline{display:flex;align-items:center;gap:10px;}
+  .mark{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:-.5px;
+    background:linear-gradient(92deg,#fff,#9fe9cf);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .livepill{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--accent);
+    padding:4px 9px;border:1px solid rgba(52,224,161,.3);border-radius:999px;background:rgba(52,224,161,.06);}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+  .spacer{flex:1;}
+  .pclink{font-family:var(--mono);font-size:11px;color:var(--muted);text-decoration:none;
+    border:1px solid var(--line);border-radius:8px;padding:5px 9px;white-space:nowrap;}
+  .pclink:active{color:var(--ink);border-color:var(--muted);}
+
+  .search{margin-top:11px;}
+  .search input{width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--ink);
+    padding:12px 14px;border-radius:12px;font-family:var(--body);font-size:15px;outline:none;transition:.18s;}
+  .search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(52,224,161,.12);}
+
+  .filters{display:flex;gap:8px;overflow-x:auto;padding:11px 2px 2px;scrollbar-width:none;-ms-overflow-style:none;}
+  .filters::-webkit-scrollbar{display:none;}
+  .chip{font-family:var(--mono);font-size:12px;letter-spacing:.3px;color:var(--muted);
+    border:1px solid var(--line);background:transparent;border-radius:999px;padding:7px 13px;cursor:pointer;
+    white-space:nowrap;flex:none;transition:.15s;}
+  .chip.on{font-weight:600;}
+
+  /* ---------- フィード ---------- */
+  .feed{padding:14px 16px 28px;display:flex;flex-direction:column;gap:18px;}
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    box-shadow:0 14px 34px rgba(0,0,0,.45);
+    opacity:0;transform:translateY(10px);animation:rise .5s ease forwards;
+  }
+  @keyframes rise{to{opacity:1;transform:none;}}
+  .m-media{position:relative;aspect-ratio:16/9;background:#000;}
+
+  .m-info{display:flex;align-items:center;gap:11px;padding:12px 14px;}
+  .m-swatch{width:11px;height:11px;border-radius:50%;flex:none;box-shadow:0 0 9px currentColor;}
+  .m-text{min-width:0;flex:1;}
+  .m-name{font-size:15.5px;font-weight:600;line-height:1.2;}
+  .m-loc{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .m-cat{font-family:var(--mono);font-size:10px;border:1px solid;border-radius:7px;padding:3px 8px;flex:none;text-transform:uppercase;}
+
+  .empty{padding:60px 24px;text-align:center;color:var(--muted);font-size:14px;line-height:1.7;}
+  .foot{padding:8px 18px calc(env(safe-area-inset-bottom) + 22px);
+    font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.7;text-align:center;}
+
+  /* ---------- 再生ブロック（PC版と同一挙動） ---------- */
+  .vid-wrap{position:relative;width:100%;height:100%;background:#000 center/cover no-repeat;cursor:pointer;overflow:hidden;}
+  .vid-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+  .vid-wrap .play-ui{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.5));transition:.2s;}
+  .play-btn{width:60px;height:60px;border-radius:50%;background:rgba(255,84,112,.94);color:#fff;display:flex;align-items:center;justify-content:center;
+    font-size:22px;padding-left:4px;box-shadow:0 6px 24px rgba(0,0,0,.5);}
+  .vid-wrap:active .play-btn{transform:scale(1.06);}
+  .play-cap{font-family:var(--mono);font-size:11px;color:#fff;letter-spacing:1px;opacity:.92;}
+  .vid-fallback{position:absolute;left:0;right:0;bottom:0;font-family:var(--mono);font-size:10px;color:#cfd8e6;background:rgba(0,0,0,.6);padding:6px 8px;text-align:center;}
+  .vid-fallback a{color:var(--blue);}
+
+  .link-card{display:flex;align-items:center;justify-content:center;background:radial-gradient(120% 120% at 50% 0%, #16202e, #0b0f16);}
+  .link-inner{text-align:center;padding:16px;}
+  .link-note{font-size:13.5px;color:var(--muted);margin-bottom:13px;line-height:1.55;}
+  .link-btn{display:inline-block;font-family:var(--mono);font-size:13px;color:#06231a;background:var(--accent);
+    text-decoration:none;padding:11px 20px;border-radius:10px;font-weight:600;}
+  .link-btn:active{filter:brightness(1.08);}
+
+  .local-veil{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+    background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.78));padding:16px;text-align:center;}
+  .local-note{font-family:var(--mono);font-size:11px;color:#ffd9a0;line-height:1.5;}
+
+  .still{width:100%;height:100%;object-fit:cover;display:block;}
+  .still-badge{position:absolute;left:8px;bottom:8px;font-family:var(--mono);font-size:10px;color:#cfd8e6;background:rgba(0,0,0,.6);padding:3px 8px;border-radius:6px;}
+</style>
+</head>
+<body>
+  <header>
+    <div class="topline">
+      <span class="mark">LIVE EARTH</span>
+      <span class="livepill"><span class="dot"></span><span id="liveCount">0</span> LIVE</span>
+      <span class="spacer"></span>
+      <a class="pclink" href="index.html?pc=1">PC版 ↗</a>
+    </div>
+    <div class="search"><input id="searchBox" placeholder="🔍  カメラ名・地名で検索…" /></div>
+    <div class="filters" id="filters"></div>
+  </header>
+
+  <main class="feed" id="feed"><div class="empty">カメラデータを読み込み中…</div></main>
+
+  <div class="foot">
+    映像はYouTube Liveなどを埋め込み表示。<br>
+    地図 © OpenStreetMap / CARTO ・ 映像 © 各配信者
+  </div>
+
+<script>
+let CATS = {}, CAMERAS = [], activeCats = new Set();
+const EMBED_OK = /^https?:$/.test(location.protocol);
+
+/* ---------- URL・埋め込みヘルパー（PC版と同一） ---------- */
+function ytId(cam){ return (cam.youtube && typeof cam.youtube !== 'object') ? cam.youtube : null; }
+function externalURL(cam){
+  if(cam.link) return cam.link;
+  if(cam.image) return cam.image.page || cam.image.url;
+  if(typeof cam.youtube === 'object' && cam.youtube.channel) return `https://www.youtube.com/channel/${cam.youtube.channel}/live`;
+  return `https://www.youtube.com/watch?v=${cam.youtube}`;
+}
+function thumbURL(cam){ const id = ytId(cam); return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : ''; }
+function embedURL(cam, autoplay){
+  const base = (typeof cam.youtube === 'object' && cam.youtube.channel)
+    ? `https://www.youtube.com/embed/live_stream?channel=${cam.youtube.channel}`
+    : `https://www.youtube.com/embed/${cam.youtube}`;
+  const sep = base.includes('?') ? '&' : '?';
+  return `${base}${sep}autoplay=${autoplay?1:0}&mute=1&playsinline=1&rel=0`;
+}
+
+/* ---------- 表示ブロック（種別別・PC版と同一） ---------- */
+let _vidSeq = 0;
+function videoBlock(cam){
+  const id = 'v'+(_vidSeq++);
+  if(cam.link){
+    return `<div class="vid-wrap link-card"><div class="link-inner">
+              <div class="link-note">${cam.note || '外部サイトでライブ配信中'}</div>
+              <a class="link-btn" href="${cam.link}" target="_blank" rel="noopener">ライブを見る ↗</a>
+            </div></div>`;
+  }
+  if(cam.image){
+    const sec = cam.image.refresh || 30;
+    return `<div class="vid-wrap">
+              <img class="still" src="${cam.image.url}" alt="${cam.name}" onerror="this.style.opacity=.25" data-base="${cam.image.url}">
+              <div class="still-badge">静止画 / ${sec}秒ごと更新</div>
+            </div>`;
+  }
+  const thumb = thumbURL(cam);
+  const bg = thumb ? `style="background-image:url('${thumb}')"` : '';
+  if(!EMBED_OK){
+    return `<div class="vid-wrap local-card" ${bg}><div class="local-veil">
+              <div class="local-note">⚠ ローカル実行のため枠内再生不可（153）</div>
+              <a class="link-btn" href="${externalURL(cam)}" target="_blank" rel="noopener">YouTubeで見る ↗</a>
+            </div></div>`;
+  }
+  const vid = ytId(cam) || '';
+  const search = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(cam.name + ' ライブ live');
+  const nm = (cam.name||'').replace(/"/g,'');
+  return `<div class="vid-wrap" id="${id}" ${bg} data-vid="${vid}" data-embed="${embedURL(cam,true)}" data-watch="${externalURL(cam)}" data-search="${search}" data-name="${nm}" onclick="playVideo(event,'${id}')">
+            <div class="play-ui"><div class="play-btn">▶</div><div class="play-cap">タップで再生</div></div>
+          </div>`;
+}
+
+/* ---------- YouTube IFrame API（埋め込み失敗を検知して自動で代替表示） ---------- */
+let YT_READY = false; const _ytPending = [];
+(function(){ var t=document.createElement('script'); t.src='https://www.youtube.com/iframe_api'; document.head.appendChild(t); })();
+window.onYouTubeIframeAPIReady = function(){ YT_READY = true; _ytPending.splice(0).forEach(fn=>fn()); };
+
+function ytFallback(el){
+  const name = el.getAttribute('data-name') || 'このカメラ';
+  const search = el.getAttribute('data-search');
+  const watch = el.getAttribute('data-watch');
+  el.innerHTML = `<div class="local-veil">
+      <div class="local-note">この配信は今すぐ再生できません（終了/埋め込み禁止）</div>
+      <a class="link-btn" href="${search}" target="_blank" rel="noopener">▶ ${name}のライブを探す</a>
+      <a href="${watch}" target="_blank" rel="noopener" style="font-family:var(--mono);font-size:10px;color:var(--blue)">元の配信を開く ↗</a>
+    </div>`;
+  el.style.cursor = 'default'; el.onclick = null;
+}
+
+function playVideo(ev, id){
+  if(ev && ev.stopPropagation) ev.stopPropagation();
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.onclick = null; el.style.cursor = 'default';
+  const vid = el.getAttribute('data-vid');
+
+  if(!vid){
+    const src = el.getAttribute('data-embed'), watch = el.getAttribute('data-watch');
+    el.innerHTML = `<iframe src="${src}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+       <div class="vid-fallback">映像が出ない場合 → <a href="${watch}" target="_blank" rel="noopener">YouTubeで開く ↗</a></div>`;
+    return;
+  }
+
+  const host = document.createElement('div');
+  host.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+  el.innerHTML = ''; el.appendChild(host);
+  const make = ()=>{
+    try{
+      new YT.Player(host, {
+        videoId: vid,
+        playerVars: {autoplay:1, mute:1, playsinline:1, rel:0},
+        events: {
+          onError: ()=>ytFallback(el),
+          onStateChange: (e)=>{ if(e.data === 0) ytFallback(el); }
+        }
+      });
+    }catch(e){ ytFallback(el); }
+  };
+  if(YT_READY) make(); else _ytPending.push(make);
+  setTimeout(()=>{ if(!el.querySelector('iframe')) ytFallback(el); }, 9000);
+}
+
+/* ---------- フィルタ ---------- */
+const filtersEl = document.getElementById('filters');
+function buildFilters(){
+  filtersEl.innerHTML = '';
+  Object.entries(CATS).forEach(([key,c])=>{
+    const b = document.createElement('button');
+    b.className = 'chip on'; b.textContent = c.label;
+    b.style.borderColor = c.color+'66'; b.style.background = c.color+'22'; b.style.color = c.color;
+    b.onclick = ()=>{
+      if(activeCats.has(key)){ activeCats.delete(key); b.classList.remove('on'); b.style.background='transparent'; b.style.color='var(--muted)'; b.style.borderColor='var(--line)'; }
+      else { activeCats.add(key); b.classList.add('on'); b.style.background=c.color+'22'; b.style.color=c.color; b.style.borderColor=c.color+'66'; }
+      render();
+    };
+    filtersEl.appendChild(b);
+  });
+}
+
+/* ---------- フィード描画 ---------- */
+const feedEl = document.getElementById('feed');
+const searchBox = document.getElementById('searchBox');
+searchBox.oninput = ()=>render();
+
+function visibleCams(){
+  const q = searchBox.value.trim().toLowerCase();
+  return CAMERAS.filter(c=> activeCats.has(c.cat) && (!q || c.name.toLowerCase().includes(q) || c.loc.toLowerCase().includes(q)));
+}
+
+let issLocEl = null;   // ISSカードの座標表示要素（位置取得後に更新）
+function render(){
+  const cams = visibleCams();
+  document.getElementById('liveCount').textContent = cams.length;
+  feedEl.innerHTML = '';
+  issLocEl = null;
+  if(!cams.length){
+    feedEl.innerHTML = '<div class="empty">該当するカメラがありません。<br>検索語やカテゴリを変えてみてください。</div>';
+    return;
+  }
+  cams.forEach((cam, i)=>{
+    const c = CATS[cam.cat] || {label:'', color:'#888'};
+    const isISS = cam.track === 'iss';
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.style.animationDelay = Math.min(i*40, 400) + 'ms';
+    card.innerHTML = `
+      <div class="m-media">${videoBlock(cam)}</div>
+      <div class="m-info">
+        <span class="m-swatch" style="color:${c.color};background:${c.color}"></span>
+        <div class="m-text">
+          <div class="m-name">${cam.name}</div>
+          <div class="m-loc">${isISS ? '📍 現在地を取得中…' : cam.loc}</div>
+        </div>
+        <span class="m-cat" style="color:${c.color};border-color:${c.color}55">${c.label}</span>
+      </div>`;
+    feedEl.appendChild(card);
+    if(isISS) issLocEl = card.querySelector('.m-loc');
+  });
+}
+
+/* ---------- ISS 現在位置（取得できてから座標を表示） ---------- */
+async function updateISS(){
+  if(!issLocEl) return;                       // ISSカードが表示されていなければ何もしない
+  try{
+    const r = await fetch('https://api.wheretheiss.at/v1/satellites/25544');
+    const d = await r.json();
+    if(issLocEl){
+      issLocEl.textContent = `📍 緯度 ${d.latitude.toFixed(2)}, 経度 ${d.longitude.toFixed(2)} ・ ${Math.round(d.velocity).toLocaleString()} km/h`;
+    }
+  }catch(e){ /* 取得できないときは「取得中…」のまま */ }
+}
+setInterval(updateISS, 5000);
+
+/* ---------- 静止画カメラの自動更新（image型を追加したとき有効） ---------- */
+setInterval(()=>{
+  document.querySelectorAll('img.still').forEach(img=>{
+    const base = img.getAttribute('data-base');
+    img.src = base + (base.includes('?')?'&':'?') + '_t=' + Date.now();
+  });
+}, 30000);
+
+/* ---------- データ読み込み → 起動 ---------- */
+function boot(data){
+  CATS = data.categories || {};
+  CAMERAS = data.cameras || [];
+  activeCats = new Set(Object.keys(CATS));
+  buildFilters();
+  render();
+  updateISS();
+}
+function showDataError(){
+  feedEl.innerHTML = '<div class="empty">カメラデータを読み込めませんでした。<br><br>'
+    + '公開URL（https://〇〇.github.io/）で開いてください。</div>';
+}
+fetch('data/cameras.json?v=' + Date.now())
+  .then(r=>{ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+  .then(boot)
+  .catch(showDataError);
+</script>
+</body>
+</html>
