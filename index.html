@@ -259,18 +259,65 @@ function videoBlock(cam){
               <a class="link-btn" href="${externalURL(cam)}" target="_blank" rel="noopener">YouTubeで見る ↗</a>
             </div></div>`;
   }
-  return `<div class="vid-wrap" id="${id}" ${bg} data-embed="${embedURL(cam,true)}" data-watch="${externalURL(cam)}" onclick="playVideo(event,'${id}')">
+  const vid = ytId(cam) || '';
+  const search = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(cam.name + ' ライブ live');
+  const nm = (cam.name||'').replace(/"/g,'');
+  return `<div class="vid-wrap" id="${id}" ${bg} data-vid="${vid}" data-embed="${embedURL(cam,true)}" data-watch="${externalURL(cam)}" data-search="${search}" data-name="${nm}" onclick="playVideo(event,'${id}')">
             <div class="play-ui"><div class="play-btn">▶</div><div class="play-cap">タップで再生</div></div>
           </div>`;
 }
+
+/* ---------- YouTube IFrame API（埋め込み失敗を検知して自動で代替表示） ---------- */
+let YT_READY = false; const _ytPending = [];
+(function(){ var t=document.createElement('script'); t.src='https://www.youtube.com/iframe_api'; document.head.appendChild(t); })();
+window.onYouTubeIframeAPIReady = function(){ YT_READY = true; _ytPending.splice(0).forEach(fn=>fn()); };
+
+function ytFallback(el){
+  const name = el.getAttribute('data-name') || 'このカメラ';
+  const search = el.getAttribute('data-search');
+  const watch = el.getAttribute('data-watch');
+  el.innerHTML = `<div class="local-veil">
+      <div class="local-note">この配信は今すぐ再生できません（終了/埋め込み禁止）</div>
+      <a class="link-btn" href="${search}" target="_blank" rel="noopener">▶ ${name}のライブを探す</a>
+      <a href="${watch}" target="_blank" rel="noopener" style="font-family:var(--mono);font-size:10px;color:var(--blue)">元の配信を開く ↗</a>
+    </div>`;
+  el.style.cursor = 'default'; el.onclick = null;
+}
+
 function playVideo(ev, id){
   if(ev && ev.stopPropagation) ev.stopPropagation();
   const el = document.getElementById(id);
   if(!el) return;
-  const src = el.getAttribute('data-embed'), watch = el.getAttribute('data-watch');
-  el.innerHTML = `<iframe src="${src}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-     <div class="vid-fallback">映像が出ない場合 → <a href="${watch}" target="_blank" rel="noopener">YouTubeで開く ↗</a></div>`;
-  el.style.cursor = 'default'; el.onclick = null;
+  el.onclick = null; el.style.cursor = 'default';
+  const vid = el.getAttribute('data-vid');
+
+  // チャンネル指定など videoId が無いものは通常の埋め込み
+  if(!vid){
+    const src = el.getAttribute('data-embed'), watch = el.getAttribute('data-watch');
+    el.innerHTML = `<iframe src="${src}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+       <div class="vid-fallback">映像が出ない場合 → <a href="${watch}" target="_blank" rel="noopener">YouTubeで開く ↗</a></div>`;
+    return;
+  }
+
+  // IFrame APIでプレーヤーを生成し、onErrorで自動フォールバック
+  const host = document.createElement('div');
+  host.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+  el.innerHTML = ''; el.appendChild(host);
+  const make = ()=>{
+    try{
+      new YT.Player(host, {
+        videoId: vid,
+        playerVars: {autoplay:1, mute:1, playsinline:1, rel:0},
+        events: {
+          onError: ()=>ytFallback(el),
+          onStateChange: (e)=>{ if(e.data === 0) ytFallback(el); } // 0 = ENDED
+        }
+      });
+    }catch(e){ ytFallback(el); }
+  };
+  if(YT_READY) make(); else _ytPending.push(make);
+  // APIが読み込めない/反応しない場合の保険
+  setTimeout(()=>{ if(!el.querySelector('iframe')) ytFallback(el); }, 9000);
 }
 
 /* ---------- ポップアップ ---------- */
