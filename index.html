@@ -250,10 +250,13 @@ let _vidSeq = 0;
 function videoBlock(cam){
   const id = 'v'+(_vidSeq++);
   if(cam.link){
-    return `<div class="vid-wrap link-card"><div class="link-inner">
-              <div class="link-note">${cam.note || '外部サイトでライブ配信中'}</div>
-              <a class="link-btn" href="${cam.link}" target="_blank" rel="noopener">ライブを見る ↗</a>
-            </div></div>`;
+    const nm = (cam.name||'').replace(/"/g,'');
+    return `<div class="vid-wrap link-card" id="${id}" data-link="${cam.link}" data-name="${nm}" onclick="openLink(event,'${id}')">
+              <div class="link-inner">
+                <div class="link-note">${cam.note || '外部サイトでライブ配信中'}</div>
+                <span class="link-btn">ライブを見る ▶</span>
+              </div>
+            </div>`;
   }
   if(cam.image){
     const sec = cam.image.refresh || 30;
@@ -293,6 +296,16 @@ function ytFallback(el){
       <a href="${watch}" target="_blank" rel="noopener" style="font-family:var(--mono);font-size:10px;color:var(--blue)">元の配信を開く ↗</a>
     </div>`;
   el.style.cursor = 'default'; el.onclick = null;
+}
+
+/* ---------- link型: 外部ページを枠内(iframe)で表示 ---------- */
+function openLink(ev, id){
+  if(ev && ev.stopPropagation) ev.stopPropagation();
+  const el = document.getElementById(id); if(!el) return;
+  el.onclick = null; el.style.cursor = 'default'; el.classList.remove('link-card');
+  const url = el.getAttribute('data-link');
+  el.innerHTML = `<iframe src="${url}" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+     <div class="vid-fallback">枠内に表示されない場合 → <a href="${url}" target="_blank" rel="noopener">別タブで開く ↗</a></div>`;
 }
 
 function playVideo(ev, id){
