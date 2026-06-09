@@ -127,7 +127,7 @@
       "lat": 43.083,
       "lng": -79.071,
       "cat": "nature",
-      "youtube": "_9pavMzUY-c"
+      "youtube": "qx7gry390YA"
     },
     {
       "name": "国際宇宙ステーション",
@@ -174,13 +174,148 @@
       "note": "2014年から24時間配信中"
     },
     {
-      "name": "淀川・三川合流（河川防災）",
-      "loc": "国交省 淀川河川事務所",
-      "lat": 34.886,
-      "lng": 135.704,
+      "name": "嵐山渡月橋（桂川）",
+      "loc": "淀川河川事務所・桂川 18.2k",
+      "lat": 35.011944,
+      "lng": 135.677222,
       "cat": "river",
-      "link": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live.php",
-      "note": "10分ごとの静止画（防災カメラ）"
+      "image": {
+        "url": "https://www.seishiga.kkr.mlit.go.jp/yodogawa/pic/C03001.jpg",
+        "page": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live_detail.php?id=C03001",
+        "refresh": 600
+      }
+    },
+    {
+      "name": "桂大橋下流（桂川）",
+      "loc": "淀川河川事務所・桂川 12.0k",
+      "lat": 34.981389,
+      "lng": 135.712222,
+      "cat": "river",
+      "image": {
+        "url": "https://www.seishiga.kkr.mlit.go.jp/yodogawa/pic/C02781.jpg",
+        "page": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live_detail.php?id=C02781",
+        "refresh": 600
+      }
+    },
+    {
+      "name": "槙尾山（宇治川）",
+      "loc": "淀川河川事務所・宇治川 51.8k",
+      "lat": 34.886389,
+      "lng": 135.813333,
+      "cat": "river",
+      "image": {
+        "url": "https://www.seishiga.kkr.mlit.go.jp/yodogawa/pic/C02795.jpg",
+        "page": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live_detail.php?id=C02795",
+        "refresh": 600
+      }
+    },
+    {
+      "name": "下三栖（宇治川）",
+      "loc": "淀川河川事務所・宇治川 42.8k",
+      "lat": 34.921111,
+      "lng": 135.748889,
+      "cat": "river",
+      "image": {
+        "url": "https://www.seishiga.kkr.mlit.go.jp/yodogawa/pic/C02997.jpg",
+        "page": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live_detail.php?id=C02997",
+        "refresh": 600
+      }
+    },
+    {
+      "name": "さくらであい館（宇治川）",
+      "loc": "淀川河川事務所・宇治川 37.3k",
+      "lat": 34.890278,
+      "lng": 135.701389,
+      "cat": "river",
+      "image": {
+        "url": "https://www.seishiga.kkr.mlit.go.jp/yodogawa/pic/C04309.jpg",
+        "page": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live_detail.php?id=C04309",
+        "refresh": 600
+      }
+    },
+    {
+      "name": "小谷付近（木津川）",
+      "loc": "淀川河川事務所・木津川 32.0k",
+      "lat": 34.762778,
+      "lng": 135.881389,
+      "cat": "river",
+      "image": {
+        "url": "https://www.seishiga.kkr.mlit.go.jp/yodogawa/pic/C03252.jpg",
+        "page": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live_detail.php?id=C03252",
+        "refresh": 600
+      }
+    },
+    {
+      "name": "流れ橋（木津川）",
+      "loc": "淀川河川事務所・木津川 6.1k",
+      "lat": 34.866111,
+      "lng": 135.746389,
+      "cat": "river",
+      "image": {
+        "url": "https://www.seishiga.kkr.mlit.go.jp/yodogawa/pic/C02975.jpg",
+        "page": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live_detail.php?id=C02975",
+        "refresh": 600
+      }
+    },
+    {
+      "name": "三川合流付近（淀川）",
+      "loc": "淀川河川事務所・淀川 35.8k",
+      "lat": 34.889444,
+      "lng": 135.685,
+      "cat": "river",
+      "image": {
+        "url": "https://www.seishiga.kkr.mlit.go.jp/yodogawa/pic/C02797.jpg",
+        "page": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live_detail.php?id=C02797",
+        "refresh": 600
+      }
+    },
+    {
+      "name": "枚方大橋（淀川）",
+      "loc": "淀川河川事務所・淀川 26.6k",
+      "lat": 34.816111,
+      "lng": 135.641389,
+      "cat": "river",
+      "image": {
+        "url": "https://www.seishiga.kkr.mlit.go.jp/yodogawa/pic/C02800.jpg",
+        "page": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live_detail.php?id=C02800",
+        "refresh": 600
+      }
+    },
+    {
+      "name": "芥川合流部（淀川）",
+      "loc": "淀川河川事務所・淀川 24.6k",
+      "lat": 34.813889,
+      "lng": 135.6175,
+      "cat": "river",
+      "image": {
+        "url": "https://www.seishiga.kkr.mlit.go.jp/yodogawa/pic/C03009.jpg",
+        "page": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live_detail.php?id=C03009",
+        "refresh": 600
+      }
+    },
+    {
+      "name": "淀川大橋（淀川）",
+      "loc": "淀川河川事務所・淀川 4.8k",
+      "lat": 34.699167,
+      "lng": 135.468333,
+      "cat": "river",
+      "image": {
+        "url": "https://www.seishiga.kkr.mlit.go.jp/yodogawa/pic/C02806.jpg",
+        "page": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live_detail.php?id=C02806",
+        "refresh": 600
+      }
+    },
+    {
+      "name": "淀川河口付近（淀川）",
+      "loc": "淀川河川事務所・淀川 0.8k",
+      "lat": 34.676389,
+      "lng": 135.411667,
+      "cat": "river",
+      "image": {
+        "url": "https://www.seishiga.kkr.mlit.go.jp/yodogawa/pic/C02807.jpg",
+        "page": "https://www.kkr.mlit.go.jp/yodogawa/bousai/live_detail.php?id=C02807",
+        "refresh": 600
+      }
     }
   ]
 }
