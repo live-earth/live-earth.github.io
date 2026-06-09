@@ -14,6 +14,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+
 <style>
   :root{
     --bg:#0a0e14; --panel:#0f141d; --panel-2:#141b27; --line:#1f2a3a;
@@ -113,6 +119,36 @@
 
   .still{width:100%;height:100%;object-fit:cover;display:block;}
   .still-badge{position:absolute;left:8px;bottom:8px;font-family:var(--mono);font-size:10px;color:#cfd8e6;background:rgba(0,0,0,.6);padding:3px 8px;border-radius:6px;}
+  /* ---------- 一覧/地図トグル ---------- */
+  .vtoggle{display:inline-flex;margin-top:11px;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .vtoggle button{font-family:var(--mono);font-size:12px;color:var(--muted);background:transparent;border:0;padding:8px 16px;cursor:pointer;}
+  .vtoggle button.on{background:var(--accent);color:#06231a;font-weight:600;}
+
+  /* ---------- 地図 ---------- */
+  #map{position:fixed;left:0;right:0;bottom:0;top:0;z-index:10;display:none;background:#0a0e14;}
+  body.mapview{overflow:hidden;}
+  body.mapview #map{display:block;}
+  body.mapview .feed,body.mapview .foot{display:none;}
+  .leaflet-container{background:#0a0e14;font-family:var(--body);}
+  .leaflet-control-zoom a{background:var(--panel-2)!important;color:var(--ink)!important;border-color:var(--line)!important;}
+  .marker-cluster{background:rgba(52,224,161,.12);}
+  .marker-cluster div{background:rgba(52,224,161,.85);color:#06231a;font-family:var(--mono);font-weight:600;}
+  .cam-marker{position:relative;width:16px;height:16px;}
+  .cam-marker .ring{position:absolute;inset:-6px;border-radius:50%;border:1.5px solid currentColor;opacity:.45;animation:ring 2.4s infinite;}
+  .cam-marker .core{position:absolute;inset:2px;border-radius:50%;background:currentColor;box-shadow:0 0 12px currentColor;}
+  .iss-marker{position:relative;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:20px;filter:drop-shadow(0 0 6px #fff);}
+  .iss-ring{position:absolute;inset:-4px;border-radius:50%;border:1.5px solid #fff;opacity:.5;animation:ring 2.4s infinite;}
+  @keyframes ring{0%{transform:scale(.6);opacity:.6;}100%{transform:scale(1.8);opacity:0;}}
+
+  /* ---------- ボトムシート（マーカー→再生） ---------- */
+  #sheetBack{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1200;opacity:0;pointer-events:none;transition:.2s;}
+  #sheetBack.show{opacity:1;pointer-events:auto;}
+  #sheet{position:fixed;left:0;right:0;bottom:0;z-index:1300;background:var(--panel);border-top:1px solid var(--line);
+    border-radius:18px 18px 0 0;transform:translateY(110%);transition:transform .25s ease;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -14px 40px rgba(0,0,0,.5);}
+  #sheet.show{transform:none;}
+  .sheet-grab{width:42px;height:4px;border-radius:2px;background:var(--line);margin:10px auto 4px;}
+  .sheet-media{position:relative;aspect-ratio:16/9;background:#000;}
+  .sheet-x{position:absolute;top:8px;right:10px;z-index:5;width:30px;height:30px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:16px;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -124,10 +160,15 @@
       <a class="pclink" href="index.html?pc=1">PC版 ↗</a>
     </div>
     <div class="search"><input id="searchBox" placeholder="🔍  カメラ名・地名で検索…" /></div>
+    <div class="vtoggle"><button id="tabMap" class="on">🗺 地図</button><button id="tabList">📋 一覧</button></div>
     <div class="filters" id="filters"></div>
   </header>
 
   <main class="feed" id="feed"><div class="empty">カメラデータを読み込み中…</div></main>
+
+  <div id="map"></div>
+  <div id="sheetBack"></div>
+  <div id="sheet"><div class="sheet-grab"></div><div class="sheet-body"></div></div>
 
   <div class="foot">
     映像はYouTube Liveなどを埋め込み表示。<br>
@@ -137,6 +178,83 @@
 <script>
 let CATS = {}, CAMERAS = [], activeCats = new Set();
 const EMBED_OK = /^https?:$/.test(location.protocol);
+
+/* ---------- 地図（一覧/地図トグル） ---------- */
+const mapDiv = document.getElementById('map');
+const lmap = L.map('map', {worldCopyJump:true, zoomControl:false, minZoom:2}).setView([24, 135], 2);
+L.control.zoom({position:'bottomright'}).addTo(lmap);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  {subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(lmap);
+const cluster = L.markerClusterGroup({maxClusterRadius:45,
+  iconCreateFunction:(c)=>L.divIcon({html:`<div>${c.getChildCount()}</div>`, className:'marker-cluster', iconSize:[36,36]})});
+lmap.addLayer(cluster);
+
+const markerById = {};
+let issMapMarker = null, issLocated = false;
+
+function camIcon(cam){
+  const color = (CATS[cam.cat]||{}).color || '#888';
+  const isISS = cam.track === 'iss';
+  return L.divIcon({className:'', iconSize:isISS?[30,30]:[16,16], iconAnchor:isISS?[15,15]:[8,8],
+    html: isISS ? `<div class="iss-marker">🛰️<span class="iss-ring"></span></div>`
+                : `<div class="cam-marker" style="color:${color}"><span class="ring"></span><span class="core"></span></div>`});
+}
+function buildMapMarkers(){
+  CAMERAS.forEach((cam, i)=>{
+    cam.id = i;
+    const m = L.marker([cam.lat, cam.lng], {icon: camIcon(cam), zIndexOffset: cam.track==='iss'?1000:0});
+    m.on('click', ()=>openSheet(cam));
+    markerById[i] = m;
+    if(cam.track === 'iss') issMapMarker = m;
+  });
+}
+function syncMap(){
+  if(!CAMERAS.length) return;
+  const vis = visibleCams();
+  cluster.clearLayers();
+  vis.forEach(cam=>{ if(cam.track !== 'iss' && markerById[cam.id]) cluster.addLayer(markerById[cam.id]); });
+  if(issMapMarker){
+    const show = issLocated && vis.some(c=>c.track==='iss');
+    if(show){ if(!lmap.hasLayer(issMapMarker)) lmap.addLayer(issMapMarker); }
+    else if(lmap.hasLayer(issMapMarker)) lmap.removeLayer(issMapMarker);
+  }
+}
+
+const tabMap = document.getElementById('tabMap');
+const tabList = document.getElementById('tabList');
+function positionMap(){ const h = document.querySelector('header').offsetHeight; mapDiv.style.top = h + 'px'; }
+function setView(v){
+  if(v === 'map'){
+    document.body.classList.add('mapview');
+    tabMap.classList.add('on'); tabList.classList.remove('on');
+    positionMap(); setTimeout(()=>lmap.invalidateSize(), 60);
+  } else {
+    document.body.classList.remove('mapview');
+    tabList.classList.add('on'); tabMap.classList.remove('on');
+  }
+}
+tabMap.onclick = ()=>setView('map');
+tabList.onclick = ()=>setView('list');
+window.addEventListener('resize', ()=>{ if(document.body.classList.contains('mapview')){ positionMap(); lmap.invalidateSize(); } });
+
+/* マーカー → ボトムシートで再生 */
+const sheet = document.getElementById('sheet');
+const sheetBack = document.getElementById('sheetBack');
+const sheetBody = sheet.querySelector('.sheet-body');
+function openSheet(cam){
+  const c = CATS[cam.cat] || {label:'', color:'#888'};
+  const isISS = cam.track === 'iss';
+  sheetBody.innerHTML = `
+    <div class="sheet-media"><button class="sheet-x" onclick="closeSheet()">✕</button>${videoBlock(cam)}</div>
+    <div class="m-info">
+      <span class="m-swatch" style="color:${c.color};background:${c.color}"></span>
+      <div class="m-text"><div class="m-name">${cam.name}</div><div class="m-loc">${isISS ? '📍 ISS（移動中）' : cam.loc}</div></div>
+      <span class="m-cat" style="color:${c.color};border-color:${c.color}55">${c.label}</span>
+    </div>`;
+  sheetBack.classList.add('show'); sheet.classList.add('show');
+}
+function closeSheet(){ sheet.classList.remove('show'); sheetBack.classList.remove('show'); sheetBody.innerHTML = ''; }
+sheetBack.onclick = closeSheet;
 
 /* ---------- URL・埋め込みヘルパー（PC版と同一） ---------- */
 function ytId(cam){ return (cam.youtube && typeof cam.youtube !== 'object') ? cam.youtube : null; }
@@ -283,6 +401,7 @@ let issLocEl = null;   // ISSカードの座標表示要素（位置取得後に
 function render(){
   const cams = visibleCams();
   document.getElementById('liveCount').textContent = cams.length;
+  syncMap();
   feedEl.innerHTML = '';
   issLocEl = null;
   if(!cams.length){
@@ -312,14 +431,16 @@ function render(){
 
 /* ---------- ISS 現在位置（取得できてから座標を表示） ---------- */
 async function updateISS(){
-  if(!issLocEl) return;                       // ISSカードが表示されていなければ何もしない
+  if(!issLocEl && !issMapMarker) return;       // ISSが画面にない/未生成なら何もしない
   try{
     const r = await fetch('https://api.wheretheiss.at/v1/satellites/25544');
     const d = await r.json();
     if(issLocEl){
       issLocEl.textContent = `📍 緯度 ${d.latitude.toFixed(2)}, 経度 ${d.longitude.toFixed(2)} ・ ${Math.round(d.velocity).toLocaleString()} km/h`;
     }
-  }catch(e){ /* 取得できないときは「取得中…」のまま */ }
+    if(issMapMarker) issMapMarker.setLatLng([d.latitude, d.longitude]);
+    if(!issLocated){ issLocated = true; syncMap(); }   // 位置取得後に地図へ表示
+  }catch(e){ /* 取得できないときは出さない */ }
 }
 setInterval(updateISS, 5000);
 
@@ -337,7 +458,9 @@ function boot(data){
   CAMERAS = data.cameras || [];
   activeCats = new Set(Object.keys(CATS));
   buildFilters();
-  render();
+  buildMapMarkers();
+  render();          // 一覧描画＋地図マーカー同期
+  setView('map');    // 既定は地図表示（一覧へはトグルで切替）
   updateISS();
 }
 function showDataError(){
