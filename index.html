@@ -260,9 +260,10 @@ function videoBlock(cam){
   }
   if(cam.image){
     const sec = cam.image.refresh || 30;
+    const upd = sec>=60 ? Math.round(sec/60)+'分' : sec+'秒';
     return `<div class="vid-wrap">
               <img class="still" src="${cam.image.url}" alt="${cam.name}" onerror="this.style.opacity=.25" data-base="${cam.image.url}">
-              <div class="still-badge">静止画 / ${sec}秒ごと更新</div>
+              <div class="still-badge">静止画 / ${upd}ごと更新</div>
             </div>`;
   }
   const thumb = thumbURL(cam);
@@ -495,7 +496,7 @@ setInterval(()=>{
     const base = img.getAttribute('data-base');
     img.src = base + (base.includes('?')?'&':'?') + '_t=' + Date.now();
   });
-}, 30000);
+}, 120000);
 
 /* ---------- データ読み込み → 起動 ---------- */
 function boot(data){
