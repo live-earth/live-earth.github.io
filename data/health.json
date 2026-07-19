@@ -1,9 +1,9 @@
 {
-  "checked_at": "2026-07-18T21:42:10+00:00",
+  "checked_at": "2026-07-19T21:42:27+00:00",
   "summary": {
-    "ok": 11,
+    "ok": 9,
     "skipped": 18,
-    "dead": 0
+    "dead": 2
   },
   "ok": [
     {
@@ -27,16 +27,8 @@
       "title": "EarthCam Live:  Waikiki (Honolulu, Hawaii)"
     },
     {
-      "name": "ジャクソンホール広場",
-      "title": "Jackson Hole Town Square Live Webcam Stream – See the Action Now"
-    },
-    {
       "name": "アフリカ水場",
       "title": "Namibia: Live stream in the Namib Desert"
-    },
-    {
-      "name": "キラウエア火山",
-      "title": "[V1cam] Kīlauea volcano, Hawaii (west Halemaʻumaʻu crater)"
     },
     {
       "name": "ナイアガラの滝",
@@ -71,5 +63,16 @@
     "淀川大橋（淀川）",
     "淀川河口付近（淀川）"
   ],
-  "dead": []
+  "dead": [
+    {
+      "name": "ジャクソンホール広場",
+      "id": "1EiC9bvVGnk",
+      "reason": "error <urlopen error [Errno 104] Connection reset by peer>"
+    },
+    {
+      "name": "キラウエア火山",
+      "id": "HggWKlZv9yk",
+      "reason": "error <urlopen error [Errno 104] Connection reset by peer>"
+    }
+  ]
 }
