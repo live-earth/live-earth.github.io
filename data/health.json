@@ -1,9 +1,9 @@
 {
-  "checked_at": "2026-08-25T21:19:04+00:00",
+  "checked_at": "2026-08-27T00:21:32+00:00",
   "summary": {
-    "ok": 11,
+    "ok": 10,
     "skipped": 18,
-    "dead": 0
+    "dead": 1
   },
   "ok": [
     {
@@ -43,10 +43,6 @@
       "title": "EarthCam Live:  Niagara Falls"
     },
     {
-      "name": "国際宇宙ステーション",
-      "title": "Live High-Definition Views from the International Space Station (Official NASA Stream)"
-    },
-    {
       "name": "オーロラ・ライブ",
       "title": "Northern Lights powered by EXPLORE.org"
     }
@@ -71,5 +67,11 @@
     "淀川大橋（淀川）",
     "淀川河口付近（淀川）"
   ],
-  "dead": []
+  "dead": [
+    {
+      "name": "国際宇宙ステーション",
+      "id": "O9mYwRlucZY",
+      "reason": "error <urlopen error [Errno 104] Connection reset by peer>"
+    }
+  ]
 }
