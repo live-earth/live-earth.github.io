@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-20T00:02:38+00:00",
+  "checked_at": "2026-10-20T23:32:56+00:00",
   "summary": {
     "ok": 11,
     "skipped": 18,
@@ -8,7 +8,7 @@
   "ok": [
     {
       "name": "タイムズスクエア",
-      "title": "EarthCam Live:  Times Square Crossroads (New York City, NY)"
+      "title": ""
     },
     {
       "name": "渋谷スクランブル交差点",
@@ -16,7 +16,7 @@
     },
     {
       "name": "アビーロード",
-      "title": "EarthCam Live:  Abbey Road Crossing (London, England)"
+      "title": ""
     },
     {
       "name": "ヴェネツィア大運河",
@@ -24,7 +24,7 @@
     },
     {
       "name": "ワイキキビーチ",
-      "title": "EarthCam Live:  Waikiki (Honolulu, Hawaii)"
+      "title": ""
     },
     {
       "name": "ジャクソンホール広場",
@@ -44,7 +44,7 @@
     },
     {
       "name": "国際宇宙ステーション",
-      "title": "Live High-Definition Views from the International Space Station (Official NASA Stream)"
+      "title": ""
     },
     {
       "name": "オーロラ・ライブ",
